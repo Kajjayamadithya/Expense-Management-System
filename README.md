@@ -164,15 +164,15 @@ npm run dev
 
 ---
 ## 🖼️ Screenshots
- #Home page
+ # Home page
  ![Home page](<screenshots/Screenshot 2025-07-28 194717.png>)
- #Login page
+ # Login page
 ![Login page](<screenshots/Screenshot 2025-07-28 194731.png>)
- #Layout page
+ # Layout page
  ![Layout page](<screenshots/Screenshot 2025-07-28 194756.png>)
- #Dashboard page
+ # Dashboard page
  ![Dashboard page](<screenshots/Screenshot 2025-07-28 194811.png>)
- #Transaction History page
+ # Transaction History page
 ![Transaction History page](<screenshots/Screenshot 2025-07-28 194831.png>)
 
 ## ⚙️ Additional Features 
