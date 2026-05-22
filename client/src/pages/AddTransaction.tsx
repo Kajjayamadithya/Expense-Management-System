@@ -15,148 +15,203 @@ interface Category {
 const AddTransaction = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [balance, setBalance] = useState<number>(0);
+  const [selectedType, setSelectedType] = useState<"income" | "expense">("expense");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    formState: { errors }
-  } = useForm({
-    resolver: yupResolver(transactionSchema)
-  });
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(transactionSchema) });
+
+  const watchedAmount = watch("amount");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [catRes, txRes] = await Promise.all([
           axios.get("/categories"),
-          axios.get("/transactions")
+          axios.get("/transactions"),
         ]);
-
         setCategories(catRes.data);
-
         const allTx = txRes.data;
-        const income = allTx
-          .filter((t: any) => t.type === "income")
-          .reduce((acc: number, t: any) => acc + t.amount, 0);
-        const expense = allTx
-          .filter((t: any) => t.type === "expense")
-          .reduce((acc: number, t: any) => acc + t.amount, 0);
-
-        setBalance(income - expense);
-      } catch (err: any) {
-        toast.error("Failed to load categories or transactions");
+        const inc = allTx.filter((t: any) => t.type === "income").reduce((a: number, t: any) => a + t.amount, 0);
+        const exp = allTx.filter((t: any) => t.type === "expense").reduce((a: number, t: any) => a + t.amount, 0);
+        setBalance(inc - exp);
+      } catch {
+        toast.error("Failed to load data");
       }
     };
-
     fetchData();
   }, []);
 
-  const onSubmit = async (data: any) => {
-    try {
-      if (data.type === "expense" && data.amount > balance) {
-        toast.error("Insufficient balance for this expense");
-        return;
-      }
+  // Keep form in sync with pill toggle
+  useEffect(() => {
+    setValue("type", selectedType);
+  }, [selectedType, setValue]);
 
+  const onSubmit = async (data: any) => {
+    if (data.type === "expense" && data.amount > balance) {
+      toast.error("Insufficient balance for this expense");
+      return;
+    }
+    setLoading(true);
+    try {
       await axios.post("/transactions", data);
-      toast.success("Transaction added successfully");
-      navigate("/dashboard");
+      toast.success("Transaction added ✅");
+      navigate("/layout");
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to add transaction");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const filteredCategories = categories.filter(c => c.type === selectedType);
+  const projectedBalance = selectedType === "expense"
+    ? balance - (Number(watchedAmount) || 0)
+    : balance + (Number(watchedAmount) || 0);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 px-4 py-12">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-xl bg-white/20 backdrop-blur-xl text-white p-8 rounded-2xl shadow-2xl border border-white/20 space-y-6"
-      >
-        <h2 className="text-3xl font-bold text-center drop-shadow">💸 Add Transaction</h2>
+    <div style={{ maxWidth: 600, margin: "0 auto" }} className="animate-fade-in">
 
-        <div>
-          <label className="block font-semibold mb-1">Title</label>
-          <input
-            {...register("title")}
-            className="w-full px-4 py-2 rounded bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-pink-300"
-            placeholder="Transaction title"
-          />
-          <p className="text-pink-200 text-sm mt-1">{errors.title?.message}</p>
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-1">Amount</label>
-          <input
-            type="number"
-            {...register("amount")}
-            className="w-full px-4 py-2 rounded bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-pink-300"
-            placeholder="₹"
-          />
-          <p className="text-pink-200 text-sm mt-1">{errors.amount?.message}</p>
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-1">Type</label>
-          <select
-            {...register("type")}
-            className="w-full px-4 py-2 rounded bg-white/20 text-black placeholder:text-gray-700 border border-white/30 focus:outline-none focus:ring-2 focus:ring-pink-300 appearance-none"
-          >
-            <option value="">Select Type</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-          <p className="text-pink-200 text-sm mt-1">{errors.type?.message}</p>
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-1">Category</label>
-          <select
-            {...register("categoryId")}
-            className="w-full px-4 py-2 rounded bg-white/20 text-black placeholder:text-gray-700 border border-white/30 focus:outline-none focus:ring-2 focus:ring-pink-300 appearance-none"
-          >
-            <option value="">Select Category</option>
-            {categories.length === 0 && (
-              <option disabled value="">
-                No categories available
-              </option>
-            )}
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>
-                {cat.name} ({cat.type})
-              </option>
-            ))}
-          </select>
-          <p className="text-pink-200 text-sm mt-1">{errors.categoryId?.message}</p>
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-1">Date</label>
-          <input
-            type="date"
-            {...register("date")}
-            className="w-full px-4 py-2 rounded bg-white/20 border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-pink-300"
-          />
-          <p className="text-pink-200 text-sm mt-1">{errors.date?.message}</p>
-        </div>
-
-        <div>
-          <label className="block font-semibold mb-1">Notes (optional)</label>
-          <textarea
-            {...register("notes")}
-            rows={3}
-            className="w-full px-4 py-2 rounded bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-pink-300"
-            placeholder="Optional notes..."
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full py-3 rounded-lg font-bold tracking-wide shadow-xl bg-blue-500 hover:bg-blue-600 transition"
-        >
+      {/* Header */}
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }}>
           Add Transaction
-        </button>
-      </form>
+        </h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)" }}>Record a new income or expense entry.</p>
+      </div>
+
+      <div className="card" style={{ padding: 32 }}>
+
+        {/* Type Toggle */}
+        <div style={{ marginBottom: 28 }}>
+          <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--text-muted)", marginBottom: 10 }}>
+            Transaction Type
+          </label>
+          <div style={{
+            display: "flex", background: "var(--bg-elevated)",
+            border: "1px solid var(--border)", borderRadius: 12, padding: 4,
+          }}>
+            {(["expense", "income"] as const).map(type => {
+              const active = selectedType === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setSelectedType(type)}
+                  style={{
+                    flex: 1, padding: "11px",
+                    borderRadius: 8, border: "none", cursor: "pointer",
+                    fontWeight: 600, fontSize: 14, fontFamily: "'Inter', sans-serif",
+                    transition: "all 0.2s",
+                    background: active
+                      ? type === "income" ? "#10b981" : "#ef4444"
+                      : "transparent",
+                    color: active ? "white" : "var(--text-muted)",
+                  }}
+                >
+                  {type === "income" ? "📥 Income" : "📤 Expense"}
+                </button>
+              );
+            })}
+          </div>
+          {/* Hidden input for form validation */}
+          <input type="hidden" {...register("type")} />
+        </div>
+
+        {/* Balance Preview */}
+        <div style={{
+          background: "var(--bg-elevated)", border: "1px solid var(--border)",
+          borderRadius: 12, padding: "14px 18px", marginBottom: 28,
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}>
+          <div>
+            <p style={{ fontSize: 11, color: "var(--text-subtle)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>Current Balance</p>
+            <p style={{ fontSize: 15, fontWeight: 700, color: balance >= 0 ? "#34d399" : "#f87171" }}>₹{balance.toLocaleString()}</p>
+          </div>
+          <div style={{ fontSize: 18, color: "var(--text-subtle)" }}>→</div>
+          <div style={{ textAlign: "right" }}>
+            <p style={{ fontSize: 11, color: "var(--text-subtle)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>After Transaction</p>
+            <p style={{ fontSize: 15, fontWeight: 700, color: projectedBalance >= 0 ? "#a5b4fc" : "#f87171" }}>₹{projectedBalance.toLocaleString()}</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+          {/* Title */}
+          <div>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--text-muted)", marginBottom: 8 }}>Title</label>
+            <input {...register("title")} className="input-dark" placeholder="e.g. Salary, Grocery, Rent…" />
+            {errors.title && <p style={{ fontSize: 12, color: "var(--accent-danger)", marginTop: 6 }}>{errors.title.message}</p>}
+          </div>
+
+          {/* Amount */}
+          <div>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--text-muted)", marginBottom: 8 }}>Amount (₹)</label>
+            <input type="number" {...register("amount")} className="input-dark" placeholder="0.00" min="0" />
+            {errors.amount && <p style={{ fontSize: 12, color: "var(--accent-danger)", marginTop: 6 }}>{errors.amount.message}</p>}
+          </div>
+
+          {/* Category */}
+          <div>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--text-muted)", marginBottom: 8 }}>Category</label>
+            <select {...register("categoryId")} className="input-dark" style={{ appearance: "none" }}>
+              <option value="">Select a category</option>
+              {filteredCategories.length === 0 && (
+                <option disabled>No {selectedType} categories available</option>
+              )}
+              {filteredCategories.map(cat => (
+                <option key={cat._id} value={cat._id}>{cat.name}</option>
+              ))}
+            </select>
+            {errors.categoryId && <p style={{ fontSize: 12, color: "var(--accent-danger)", marginTop: 6 }}>{errors.categoryId.message}</p>}
+          </div>
+
+          {/* Date */}
+          <div>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--text-muted)", marginBottom: 8 }}>Date</label>
+            <input type="date" {...register("date")} className="input-dark" />
+            {errors.date && <p style={{ fontSize: 12, color: "var(--accent-danger)", marginTop: 6 }}>{errors.date.message}</p>}
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "var(--text-muted)", marginBottom: 8 }}>Notes <span style={{ color: "var(--text-subtle)", fontWeight: 400 }}>(optional)</span></label>
+            <textarea
+              {...register("notes")}
+              rows={3}
+              className="input-dark"
+              placeholder="Any additional notes…"
+              style={{ resize: "vertical" }}
+            />
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: "flex", gap: 12, marginTop: 4 }}>
+            <button
+              type="button"
+              onClick={() => navigate("/layout")}
+              className="btn-ghost"
+              style={{ flex: 1, padding: "13px" }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary btn-shimmer"
+              style={{ flex: 2, padding: "13px", fontSize: 15, opacity: loading ? 0.7 : 1 }}
+            >
+              {loading ? "Saving…" : `Save ${selectedType === "income" ? "Income" : "Expense"} →`}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

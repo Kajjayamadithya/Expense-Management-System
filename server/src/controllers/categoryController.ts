@@ -21,7 +21,7 @@ export const updateCategory = async (req: Request, res: Response) => {
   const userId = (req as any).user;
 
   const category = await Category.findOneAndUpdate(
-    { _id: id, userId },
+    { _id: id, user: userId },
     { name, type },
     { new: true }
   );
@@ -35,7 +35,7 @@ export const deleteCategory = async (req: Request, res: Response) => {
   const { id } = req.params;
   const userId = (req as any).user;
 
-  const deleted = await Category.findOneAndDelete({ _id: id, userId });
+  const deleted = await Category.findOneAndDelete({ _id: id, user: userId });
   if (!deleted) return res.status(404).json({ message: "Category not found" });
 
   res.json({ message: "Category deleted successfully" });

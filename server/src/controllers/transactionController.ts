@@ -24,8 +24,19 @@ export const getTransactions = async (req: Request, res: Response) => {
     if (endDate) filter.date.$lte = new Date(endDate as string);
   }
 
-  const transactions = await Transaction.find(filter).sort({ date: -1 });
-  res.json(transactions);
+  const transactions = await Transaction.find(filter)
+    .populate("categoryId", "name type")
+    .sort({ date: -1 });
+
+  // Remap categoryId → category so the client interface stays consistent
+  const mapped = transactions.map(tx => {
+    const obj = tx.toObject() as any;
+    obj.category = obj.categoryId;
+    delete obj.categoryId;
+    return obj;
+  });
+
+  res.json(mapped);
 };
 
 export const updateTransaction = async (req: Request, res: Response) => {
