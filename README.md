@@ -171,9 +171,9 @@ npm run dev
  # Layout page
  ![Layout page](<screenshots/Layout Page.jpeg>)
  # Dashboard page
- ![Dashboard page](<screenshots/Dashboard Page.jpeg>)
+ ![Dashboard page](<screenshots/Layout Page.jpeg>)
  # Transaction History page
-![Transaction History page](<screenshots/Transaction History Page.jpeg>)
+![Transaction History page](<screenshots/Transaction page.jpeg>)
 # Category Page
  ![Category Page](<screenshots/Category Page.jpeg>)
 
