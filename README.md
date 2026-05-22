@@ -165,15 +165,17 @@ npm run dev
 ---
 ## 🖼️ Screenshots
  # Home page
- ![Home page](<screenshots/Screenshot 2025-07-28 194717.png>)
+ ![Home page](<screenshots/Home Page.jpeg>)
  # Login page
-![Login page](<screenshots/Screenshot 2025-07-28 194731.png>)
+![Login page](<screenshots/Login Page.jpeg>)
  # Layout page
- ![Layout page](<screenshots/Screenshot 2025-07-28 194756.png>)
+ ![Layout page](<screenshots/Layout Page.jpeg>)
  # Dashboard page
- ![Dashboard page](<screenshots/Screenshot 2025-07-28 194811.png>)
+ ![Dashboard page](<screenshots/Dashboard Page.jpeg>)
  # Transaction History page
-![Transaction History page](<screenshots/Screenshot 2025-07-28 194831.png>)
+![Transaction History page](<screenshots/Transaction History Page.jpeg>)
+# Category Page
+ ![Category Page](<screenshots/Category Page.jpeg>)
 
 ## ⚙️ Additional Features 
 
