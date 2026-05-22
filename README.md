@@ -168,8 +168,6 @@ npm run dev
  ![Home page](<screenshots/Home Page.jpeg>)
  # Login page
 ![Login page](<screenshots/Login Page.jpeg>)
- # Layout page
- ![Layout page](<screenshots/Layout Page.jpeg>)
  # Dashboard page
  ![Dashboard page](<screenshots/Layout Page.jpeg>)
  # Transaction History page
