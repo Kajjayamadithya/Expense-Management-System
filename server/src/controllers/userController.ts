@@ -27,8 +27,9 @@ export const registerUser = async (req: Request, res: Response) => {
       email: user.email,
       token: generateToken(user._id.toString())
     });
-  } catch (err: any) {
-    console.error("Registration error:", err.message);
+  } catch (err) {
+    const error = err as Error;
+    console.error("Registration error:", error.message);
     return res.status(500).json({ message: "Server error during registration" });
   }
 };
@@ -54,8 +55,9 @@ export const loginUser = async (req: Request, res: Response) => {
       email: user.email,
       token: generateToken(user._id.toString())
     });
-  } catch (err: any) {
-    console.error("Login error:", err.message);
+  } catch (err) {
+    const error = err as Error;
+    console.error("Login error:", error.message);
     return res.status(500).json({ message: "Server error during login" });
   }
 };

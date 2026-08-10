@@ -168,12 +168,24 @@ npm run dev
  ![Home page](<screenshots/Home Page.jpeg>)
  # Login page
 ![Login page](<screenshots/Login Page.jpeg>)
+<<<<<<< Updated upstream
  # Dashboard page
  ![Dashboard page](<screenshots/Layout Page.jpeg>)
  # Transaction History page
 ![Transaction History page](<screenshots/Transaction page.jpeg>)
 # Category Page
  ![Category Page](<screenshots/Category Page.jpeg>)
+=======
+ # Layout page
+ ![Layout page](<screenshots/Layout Page.jpeg>)
+ # Dashboard page
+ ![Dashboard page](<screenshots/Layout Page.jpeg>)
+ # Transaction History page
+![Transaction History page](<screenshots/Transaction Page.jpeg>)
+ # Category Page
+ ![Category Page](<screenshots/Category Page.jpeg>)
+ 
+>>>>>>> Stashed changes
 
 ## ⚙️ Additional Features 
 

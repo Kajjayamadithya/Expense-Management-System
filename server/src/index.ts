@@ -5,6 +5,10 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes";
 import transactionRoutes from "./routes/transactionRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
+import aiRoutes from "./routes/aiRoutes";
+import budgetRoutes from "./routes/budgetRoutes";
+import goalRoutes from "./routes/goalRoutes";
+import groupRoutes from "./routes/groupRoutes";
 
 dotenv.config();
 
@@ -19,7 +23,7 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 
 mongoose
   .connect(process.env.MONGO_URI || "", {
@@ -41,6 +45,10 @@ app.get("/api/test", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/budgets", budgetRoutes);
+app.use("/api/goals", goalRoutes);
+app.use("/api/groups", groupRoutes);
 
 // ✅ Start server
 app.listen(PORT, () => {

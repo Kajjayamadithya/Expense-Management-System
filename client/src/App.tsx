@@ -7,6 +7,8 @@ import Dashboard from "./pages/Dashboard";
 import AddTransaction from "./pages/AddTransaction";
 import Category from "./pages/Category";
 import TransactionHistory from "./pages/TransactionHistory";
+import BudgetsAndGoals from "./pages/BudgetsAndGoals";
+import GroupSplitter from "./pages/GroupSplitter";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -22,11 +24,12 @@ function App() {
         {/* 🔐 Auth Page */}
         <Route path="/auth" element={<Auth />} />
         
-        {/* 🏠 Main Layout with Navigation */ }
-
+        {/* 🏠 Main Layout with Navigation */}
         <Route path="/layout" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="add-transaction" element={<AddTransaction />} />
+          <Route path="budgets-goals" element={<BudgetsAndGoals />} />
+          <Route path="groups" element={<GroupSplitter />} />
           <Route path="category" element={<Category />} />
           <Route path="transaction-history" element={<TransactionHistory />} />
         </Route>

@@ -36,8 +36,13 @@ const Auth = () => {
       login(userData, token);
       toast.success(`${isLogin ? "Welcome back" : "Account created"} 🎉`);
       navigate("/layout");
-    } catch (err: any) {
-      const message = err.response?.data?.message || err.message || "Something went wrong";
+    } catch (err) {
+      let message = "Something went wrong";
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        message = err.response.data.message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
       toast.error(message);
     } finally {
       setLoading(false);

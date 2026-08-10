@@ -24,7 +24,19 @@ interface Category {
   type: "income" | "expense";
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipPayloadItem {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayloadItem[];
+  label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
@@ -32,7 +44,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       borderRadius: 10, padding: "10px 14px", fontSize: 13,
     }}>
       <p style={{ color: "var(--text-muted)", marginBottom: 6 }}>{label}</p>
-      {payload.map((p: any) => (
+      {payload.map((p) => (
         <p key={p.name} style={{ color: p.color, fontWeight: 600 }}>
           {p.name}: ₹{p.value?.toLocaleString()}
         </p>

@@ -16,6 +16,8 @@ const schema = yup.object({
   type: yup.string().oneOf(["income", "expense"]).required("Type is required"),
 });
 
+type CategoryFormData = yup.InferType<typeof schema>;
+
 const Category = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,7 +28,7 @@ const Category = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm<CategoryFormData>({ resolver: yupResolver(schema) });
 
   const fetchCategories = async () => {
     try {
@@ -39,7 +41,7 @@ const Category = () => {
 
   useEffect(() => { fetchCategories(); }, []);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CategoryFormData) => {
     setLoading(true);
     try {
       await axios.post("/categories", data);
@@ -164,7 +166,7 @@ const Category = () => {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   style={{
-                    padding: "8px 16px", borderRadius: 8, border: "none", cursor: "pointer",
+                    padding: "8px 16px", borderRadius: 8, cursor: "pointer",
                     background: active ? "#6366f1" : "var(--bg-elevated)",
                     color: active ? "white" : "var(--text-muted)",
                     fontWeight: 500, fontSize: 13, fontFamily: "'Inter', sans-serif",

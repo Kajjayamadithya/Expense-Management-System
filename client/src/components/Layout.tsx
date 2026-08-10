@@ -2,10 +2,13 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
+import AIChatbotWidget from "./AIChatbotWidget";
 
 const navItems = [
   { to: "/layout", label: "Dashboard", icon: "📊", exact: true },
   { to: "/layout/add-transaction", label: "Add Transaction", icon: "➕" },
+  { to: "/layout/budgets-goals", label: "Budgets & Vaults", icon: "🎯" },
+  { to: "/layout/groups", label: "Group Splitter", icon: "👥" },
   { to: "/layout/transaction-history", label: "History", icon: "📜" },
   { to: "/layout/category", label: "Categories", icon: "🗂" },
 ];
@@ -209,6 +212,9 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+
+      {/* 🤖 Floating AI Chatbot Widget */}
+      <AIChatbotWidget />
     </div>
   );
 }
