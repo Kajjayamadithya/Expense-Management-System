@@ -29,7 +29,7 @@ A full-stack **MERN** (MongoDB, Express.js, React + Vite, Node.js) application f
 - **Recharts** for charts
 - **react-hot-toast** (notifications)
 - **jsPDF + FileSaver** (PDF/CSV export)
-- **papaParse
+- **papaParse**
 
 ### Backend
 - **Node.js** with **Express.js**
